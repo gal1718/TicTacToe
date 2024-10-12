@@ -28,6 +28,10 @@ body {
     color: #F2EBD3;
 }
 
+span { 
+    color: #F2EBD3;
+}
+
 .status-action {
     margin-top: 25px;
     font-size: 25px;
@@ -62,12 +66,13 @@ body {
     align-items: center;
 }
 
-.x::before{
+.x::after{
     content: '×';
     font-size: 260px;
 }
 
-.o::before{
+.o::after{
     content: 'O';
     font-size: 170px;
+    color: #F2EBD3;
 }

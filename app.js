@@ -6,7 +6,6 @@ const cellDivs = document.querySelectorAll(".game-cell");
 // game variables
 let gameIsLive = true;
 let xIsNext = true;
-let currentBoard = ['','','','','','','','',''];
 let winner = null;
 
 //game constans
@@ -18,85 +17,114 @@ const oSymbol = 'O'
 
 const letterToSymbol = (letter) => letter === 'x' ? xSymbol : oSymbol;
 
-const checkAllEqual = (values, player) => {
-  return values.every((val) => val === player);
-};
-
-const checkGameStatus = (currentMoveIndex, player) => {
-  const row = Math.floor(currentMoveIndex / 3);
-  const column = currentMoveIndex % 3;
-
-  //check Row values
-  const rowValues = [
-    currentBoard[row * 3],
-    currentBoard[row * 3 + 1],
-    currentBoard[row * 3 + 2],
-  ];
-  const rowWin = checkAllEqual(rowValues, player);
-
-  //check column values
-  const colValues = [
-    currentBoard[column],
-    currentBoard[column + 3],
-    currentBoard[column + 6],
-  ];
-  const colWin = checkAllEqual(colValues, player);
-
-  //if diagnosal 1 needed check it
-  let diagonal1Win = false;
-  if ([0, 4, 8].some((pos) => pos === currentMoveIndex)) {
-    const diagonal1Values = [currentBoard[0], currentBoard[4], currentBoard[8]];
-    diagonal1Win = checkAllEqual(diagonal1Values, player);
-  }
-
-  //if diagnosal 2 needed check it
-  let diagonal2Win = false;
-  if ([2, 4, 6].some((pos) => pos === currentMoveIndex)) {
-    const diagonal2Values = [currentBoard[2], currentBoard[4], currentBoard[6]];
-    diagonal2Win = checkAllEqual(diagonal2Values, player);
-  }
-
-  if (rowWin || colWin || diagonal1Win || diagonal2Win) {
-    winner = player;
+const declareWinner = (letter) => {
     gameIsLive = false;
-    statusDiv.innerHTML = `${letterToSymbol(player)} has won!`;
+    winner = letter;
+    statusDiv.innerHTML = `${letterToSymbol(letter)} has won`;
+}
+
+const checkEquivalent = (x ,y, z) => {
+  if(x && x===y && x===z){
+    return true;
   }
-  //tie
-  else if(currentBoard.every(el => el != '')){
+}
+
+
+const checkGameStatus = () => {
+  const topLeft = cellDivs[0].classList[1];
+  const topMiddle = cellDivs[1].classList[1];
+  const topRight = cellDivs[2].classList[1];
+  const middleLeft = cellDivs[3].classList[1];
+  const middleMiddle = cellDivs[4].classList[1];
+  const middleRight = cellDivs[5].classList[1];
+  const bottomLeft = cellDivs[6].classList[1];
+  const bottomMiddle = cellDivs[7].classList[1];
+  const bottomRight = cellDivs[8].classList[1];
+
+  if(checkEquivalent(topLeft, topMiddle, topRight)){
+    declareWinner(topLeft);
+    cellDivs[0].classList.add('won');
+    cellDivs[1].classList.add('won');
+    cellDivs[2].classList.add('won');
+  }else if(checkEquivalent(middleLeft, middleMiddle, middleRight)){
+    declareWinner(middleLeft);
+    cellDivs[3].classList.add('won');
+    cellDivs[4].classList.add('won');
+    cellDivs[5].classList.add('won');
+  }else if(checkEquivalent(bottomLeft, bottomMiddle, bottomRight)){
+    declareWinner(bottomLeft);
+    cellDivs[6].classList.add('won');
+    cellDivs[7].classList.add('won');
+    cellDivs[8].classList.add('won');
+  }else if(checkEquivalent(topLeft, middleLeft, bottomLeft)){
+    declareWinner(topLeft);
+    cellDivs[0].classList.add('won');
+    cellDivs[3].classList.add('won');
+    cellDivs[6].classList.add('won');
+  }else if(checkEquivalent(topMiddle, middleMiddle, bottomMiddle)){
+    declareWinner(topMiddle);
+    cellDivs[1].classList.add('won');
+    cellDivs[4].classList.add('won');
+    cellDivs[7].classList.add('won');
+  }else if(checkEquivalent(topRight, middleRight, bottomRight)){
+    declareWinner(topRight);
+    cellDivs[2].classList.add('won');
+    cellDivs[5].classList.add('won');
+    cellDivs[8].classList.add('won');
+  }else if(checkEquivalent(topLeft, middleMiddle, bottomRight)){
+    declareWinner(topLeft);
+    cellDivs[0].classList.add('won');
+    cellDivs[4].classList.add('won');
+    cellDivs[8].classList.add('won');
+  }else if(checkEquivalent(topRight, middleMiddle, bottomLeft)){
+    declareWinner(topRight);
+    cellDivs[2].classList.add('won');
+    cellDivs[4].classList.add('won');
+    cellDivs[6].classList.add('won');
+  }else if(topLeft && topMiddle && topRight && middleLeft && middleMiddle && middleRight && bottomLeft && bottomMiddle && bottomRight){
     gameIsLive = false;
+    statusDiv.innerHTML = 'Game Is Tied';
   }
-};
+  else{
+    xIsNext = !xIsNext;
+    if(xIsNext){
+      statusDiv.innerHTML = `${xSymbol} turn`
+    }
+    else{
+      statusDiv.innerHTML = `<span> ${oSymbol} turn </span>`
+    }
+  }
+
+}
 
 // event Handlers
 const handleReset = (e) => {
-  console.log(e);
+  xIsNext = true;
+  statusDiv.innerHTML = `${xSymbol} is next!`;
+  for(const cell of cellDivs){
+    cell.classList.remove('x');
+    cell.classList.remove('o');
+  }
+  gameIsLive = true;
+  winner = null;
 };
 
 const handleCellClick = (e) => {
   var classList = e.target.classList;
   console.log(classList);
-  //location
-  //const location = e.target.classList[1];
-  const currentMoveIndex = parseInt(e.target.classList[0]);
+
   if (!classList.contains("x") && !classList.contains("o")) {
     if (xIsNext) {
-      currentBoard[currentMoveIndex] = "x";
       classList.add("x");
     } else {
       classList.add("o");
-      currentBoard[currentMoveIndex] = "o";
     }
-    checkGameStatus(currentMoveIndex, xIsNext ? "x" : "o");
-    xIsNext = !xIsNext;
+    checkGameStatus();
   }
 };
 
 // event listeners
 resetDiv.addEventListener("click", handleReset);
-
-// const res = Array.from(cellDivs).map((cell) => {
-//     console.log(cell);
-// });
 
 for (cell of cellDivs) {
   cell.addEventListener("click", handleCellClick);
