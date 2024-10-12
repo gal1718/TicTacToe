@@ -28,7 +28,7 @@ body {
     color: #F2EBD3;
 }
 
-span { 
+.status span { 
     color: #F2EBD3;
 }
 
@@ -38,6 +38,7 @@ span {
     display: flex;
     justify-content: space-around;
 }
+
 
 .reset {
     cursor: pointer;
@@ -66,13 +67,64 @@ span {
     align-items: center;
 }
 
+.x,
+.y{
+    cursor: default;
+}
+
 .x::after{
     content: '×';
-    font-size: 260px;
+    font-size: 200px;
 }
 
 .o::after{
-    content: 'O';
-    font-size: 170px;
+    content: '○';
+    font-size: 220px;
     color: #F2EBD3;
+}
+
+.won::after {
+    color: red !important;
+}
+
+@media only screen and (max-width: 1024px){
+
+    .game-grid{
+        margin-top: 25px;
+        grid-gap: 10px;
+    }
+
+    .game-cell{
+        height: 150px;
+        width: 150px;
+    }
+
+    .x::after{
+        font-size: 150px;
+    }
+
+    .o::after{
+        font-size: 120px;
+    }
+}
+
+@media only screen and (max-width: 540px){
+
+    .container{
+        margin: 25px;
+        padding: 25px;
+    }
+
+    .game-cell{
+        height: 100px;
+        width: 100px;
+    }
+
+    .x::after{
+        font-size: 100px;
+    }
+
+    .o::after{
+        font-size: 120px;
+    }
 }

@@ -6,7 +6,6 @@ const cellDivs = document.querySelectorAll(".game-cell");
 // game variables
 let gameIsLive = true;
 let xIsNext = true;
-let winner = null;
 
 //game constans
 const xSymbol = '×';
@@ -19,7 +18,6 @@ const letterToSymbol = (letter) => letter === 'x' ? xSymbol : oSymbol;
 
 const declareWinner = (letter) => {
     gameIsLive = false;
-    winner = letter;
     statusDiv.innerHTML = `${letterToSymbol(letter)} has won`;
 }
 
@@ -104,23 +102,26 @@ const handleReset = (e) => {
   for(const cell of cellDivs){
     cell.classList.remove('x');
     cell.classList.remove('o');
+    cell.classList.remove('won');
   }
   gameIsLive = true;
-  winner = null;
 };
 
 const handleCellClick = (e) => {
+  
   var classList = e.target.classList;
   console.log(classList);
 
-  if (!classList.contains("x") && !classList.contains("o")) {
+  if (!gameIsLive || classList.contains("x") || classList.contains("o")) {
+    return;
+  }
     if (xIsNext) {
       classList.add("x");
     } else {
       classList.add("o");
     }
     checkGameStatus();
-  }
+  
 };
 
 // event listeners
